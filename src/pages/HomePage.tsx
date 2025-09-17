@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, Category, categoryInfoMap } from '../types';
+import { Article, categoryInfoMap } from '../types';
 import { articleApi } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import CategoryCard from '../components/CategoryCard';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Category, categoryInfoMap } from '../../types';
+import { categoryInfoMap } from '../../types';
 import { authService, User } from '../../services/authApi';
 
 const HeaderContainer = styled.header`

@@ -104,7 +104,7 @@ const LoginPage: React.FC = () => {
     setSuccess('');
 
     try {
-      const response = await authService.login(formData);
+      await authService.login(formData);
       setSuccess('로그인 성공!');
       setTimeout(() => {
         navigate('/');
