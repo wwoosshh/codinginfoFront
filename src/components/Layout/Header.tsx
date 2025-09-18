@@ -58,25 +58,6 @@ const Nav = styled.nav`
   display: none;
 `;
 
-const NavLink = styled(Link)`
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-weight: 500;
-  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: ${({ theme }) => theme.transitions.fast};
-  white-space: nowrap;
-  flex-shrink: 0;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.text};
-    background-color: ${({ theme }) => theme.colors.surfaceHover};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
-    padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
-    font-size: ${({ theme }) => theme.fontSizes.sm};
-  }
-`;
 
 const SearchContainer = styled.div`
   position: relative;

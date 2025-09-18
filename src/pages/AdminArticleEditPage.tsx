@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, Category, ArticleStatus, categoryInfoMap } from '../types';
+import { Category, ArticleStatus, categoryInfoMap } from '../types';
 import { adminApi } from '../services/adminApi';
 import LoadingSpinner from '../components/LoadingSpinner';
 

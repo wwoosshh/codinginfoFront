@@ -241,7 +241,7 @@ const AdminUsersPage: React.FC = () => {
 
   useEffect(() => {
     fetchUsers(1);
-  }, [searchQuery, roleFilter, statusFilter]);
+  }, [searchQuery, roleFilter, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);

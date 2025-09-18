@@ -281,7 +281,7 @@ const AdminArticlesPage: React.FC = () => {
 
   useEffect(() => {
     fetchArticles(1);
-  }, [searchQuery, categoryFilter, statusFilter]);
+  }, [searchQuery, categoryFilter, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -317,8 +317,6 @@ const AdminArticlesPage: React.FC = () => {
         return '발행됨';
       case 'draft':
         return '초안';
-      case 'archived':
-        return '보관됨';
       default:
         return status;
     }
@@ -358,7 +356,6 @@ const AdminArticlesPage: React.FC = () => {
             <option value="">모든 상태</option>
             <option value="published">발행됨</option>
             <option value="draft">초안</option>
-            <option value="archived">보관됨</option>
           </FilterSelect>
         </Controls>
         </div>
@@ -412,6 +409,11 @@ const AdminArticlesPage: React.FC = () => {
                       {new Date(article.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
+                      <Link to={`/admin/articles/${article._id}`} style={{ textDecoration: 'none' }}>
+                        <ActionButton style={{ marginRight: '8px' }}>
+                          수정
+                        </ActionButton>
+                      </Link>
                       {article.status === 'draft' && (
                         <ActionButton
                           variant="success"
@@ -423,16 +425,9 @@ const AdminArticlesPage: React.FC = () => {
                       {article.status === 'published' && (
                         <ActionButton
                           variant="warning"
-                          onClick={() => handleStatusChange(article._id, ArticleStatus.ARCHIVED)}
+                          onClick={() => handleStatusChange(article._id, ArticleStatus.DRAFT)}
                         >
-                          보관
-                        </ActionButton>
-                      )}
-                      {article.status === 'archived' && (
-                        <ActionButton
-                          onClick={() => handleStatusChange(article._id, ArticleStatus.PUBLISHED)}
-                        >
-                          복원
+                          초안으로
                         </ActionButton>
                       )}
                       <ActionButton
