@@ -137,7 +137,7 @@ const CategoryPage: React.FC = () => {
       {articles.length > 0 ? (
         <ArticlesGrid>
           {articles.map((article) => (
-            <ArticleCard key={article.id || article._id} article={article} />
+            <ArticleCard key={article._id} article={article} />
           ))}
         </ArticlesGrid>
       ) : (
