@@ -257,7 +257,7 @@ const AdminUsersPage: React.FC = () => {
   };
 
   const handleDeleteUser = async (userId: string, username: string) => {
-    if (!confirm(`사용자 "${username}"를 삭제하시겠습니까?`)) return;
+    if (!window.confirm(`사용자 "${username}"를 삭제하시겠습니까?`)) return;
 
     try {
       await adminApi.deleteUser(userId);

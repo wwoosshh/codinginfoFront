@@ -292,7 +292,7 @@ const AdminArticlesPage: React.FC = () => {
   };
 
   const handleDeleteArticle = async (articleId: string, title: string) => {
-    if (!confirm(`아티클 "${title}"를 삭제하시겠습니까?`)) return;
+    if (!window.confirm(`아티클 "${title}"를 삭제하시겠습니까?`)) return;
 
     try {
       await adminApi.deleteArticle(articleId);
