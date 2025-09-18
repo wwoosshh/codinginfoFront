@@ -20,9 +20,16 @@ const HeaderContent = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  
+  gap: ${({ theme }) => theme.spacing.md};
+
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     padding: 0 ${({ theme }) => theme.spacing.md};
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    padding: 0 ${({ theme }) => theme.spacing.sm};
+    height: 56px;
   }
 `;
 
@@ -31,17 +38,34 @@ const Logo = styled(Link)`
   font-weight: 700;
   color: ${({ theme }) => theme.colors.primary};
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primaryDark};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    font-size: ${({ theme }) => theme.fontSizes.lg};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    font-size: ${({ theme }) => theme.fontSizes.md};
   }
 `;
 
 const Nav = styled.nav`
   display: flex;
   align-items: center;
-  gap: ${({ theme }) => theme.spacing.lg};
-  
+  gap: ${({ theme }) => theme.spacing.md};
+  flex: 1;
+  justify-content: center;
+  overflow-x: auto;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
+
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
     display: none;
   }
@@ -53,10 +77,17 @@ const NavLink = styled(Link)`
   padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   transition: ${({ theme }) => theme.transitions.fast};
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &:hover {
     color: ${({ theme }) => theme.colors.text};
     background-color: ${({ theme }) => theme.colors.surfaceHover};
+  }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+    font-size: ${({ theme }) => theme.fontSizes.sm};
   }
 `;
 
@@ -64,6 +95,12 @@ const SearchContainer = styled.div`
   position: relative;
   display: flex;
   align-items: center;
+  flex-shrink: 1;
+  min-width: 0;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    display: none;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -71,7 +108,9 @@ const SearchInput = styled.input`
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
+  min-width: 120px;
   transition: ${({ theme }) => theme.transitions.fast};
 
   &:focus {
@@ -81,7 +120,8 @@ const SearchInput = styled.input`
   }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    width: 150px;
+    max-width: 150px;
+    min-width: 100px;
   }
 `;
 
@@ -136,6 +176,11 @@ const UserSection = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
+  flex-shrink: 0;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    gap: ${({ theme }) => theme.spacing.sm};
+  }
 `;
 
 const UserInfo = styled.div`
@@ -144,6 +189,11 @@ const UserInfo = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
   color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  white-space: nowrap;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    display: none;
+  }
 `;
 
 const AuthButton = styled(Link)`
@@ -232,6 +282,9 @@ const Header: React.FC = () => {
                 <span>{user.username}</span>
                 {user.role === 'admin' && <span>👑</span>}
               </UserInfo>
+              {user.role === 'admin' && (
+                <AuthButton to="/admin">관리자</AuthButton>
+              )}
               <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
             </>
           ) : (

@@ -39,6 +39,12 @@ export enum Category {
   DATA_STRUCTURE = 'DATA_STRUCTURE',
 }
 
+export enum ArticleStatus {
+  DRAFT = 'draft',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived',
+}
+
 export interface CategoryInfo {
   key: Category;
   displayName: string;
