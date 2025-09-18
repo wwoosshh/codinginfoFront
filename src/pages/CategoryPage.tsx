@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, Category, categoryInfoMap } from '../types';
+import { Article, Category, ArticleListResponse, categoryInfoMap } from '../types';
 import { articleApi } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -97,7 +97,7 @@ const CategoryPage: React.FC = () => {
         setLoading(true);
         setError(null);
         const result = await articleApi.getArticlesByCategory(category as Category);
-        setArticles(result);
+        setArticles(result.articles);
       } catch (err) {
         setError(err instanceof Error ? err.message : '아티클을 불러올 수 없습니다.');
       } finally {

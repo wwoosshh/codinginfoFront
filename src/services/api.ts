@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Article, Category } from '../types';
+import { Article, Category, ArticleListResponse } from '../types';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5159';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://codinginfoback-production.up.railway.app';
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
@@ -12,8 +12,10 @@ const api = axios.create({
 });
 
 export const articleApi = {
-  getAllArticles: async (): Promise<Article[]> => {
-    const response = await api.get<Article[]>('/articles');
+  getAllArticles: async (page: number = 1, limit: number = 10): Promise<ArticleListResponse> => {
+    const response = await api.get<ArticleListResponse>('/articles', {
+      params: { page, limit }
+    });
     return response.data;
   },
 
@@ -22,14 +24,16 @@ export const articleApi = {
     return response.data;
   },
 
-  getArticlesByCategory: async (category: Category): Promise<Article[]> => {
-    const response = await api.get<Article[]>(`/articles/category/${category}`);
+  getArticlesByCategory: async (category: Category, page: number = 1, limit: number = 10): Promise<ArticleListResponse> => {
+    const response = await api.get<ArticleListResponse>(`/articles/category/${category}`, {
+      params: { page, limit }
+    });
     return response.data;
   },
 
-  searchArticles: async (keyword: string): Promise<Article[]> => {
-    const response = await api.get<Article[]>('/articles/search', {
-      params: { keyword },
+  searchArticles: async (keyword: string, page: number = 1, limit: number = 10): Promise<ArticleListResponse> => {
+    const response = await api.get<ArticleListResponse>('/articles/search', {
+      params: { keyword, page, limit },
     });
     return response.data;
   },

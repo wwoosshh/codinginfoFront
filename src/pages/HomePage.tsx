@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, categoryInfoMap } from '../types';
+import { Article, ArticleListResponse, categoryInfoMap } from '../types';
 import { articleApi } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import CategoryCard from '../components/CategoryCard';
@@ -74,6 +74,7 @@ const NoResults = styled.div`
 
 const HomePage: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
@@ -84,15 +85,16 @@ const HomePage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        let result: Article[];
+
+        let result: ArticleListResponse;
         if (searchQuery) {
           result = await articleApi.searchArticles(searchQuery);
         } else {
           result = await articleApi.getAllArticles();
         }
-        
-        setArticles(result);
+
+        setArticles(result.articles);
+        setPagination(result.pagination);
       } catch (err) {
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
@@ -142,16 +144,16 @@ const HomePage: React.FC = () => {
       <Section>
         {searchQuery ? (
           <SearchResultsText>
-            "{searchQuery}"에 대한 검색 결과 ({articles.length}개)
+            "{searchQuery}"에 대한 검색 결과 ({pagination?.totalArticles || 0}개)
           </SearchResultsText>
         ) : (
           <SectionTitle>최신 아티클</SectionTitle>
         )}
-        
+
         {articles.length > 0 ? (
           <ArticlesGrid>
             {articles.map((article) => (
-              <ArticleCard key={article.id || article._id} article={article} />
+              <ArticleCard key={article._id} article={article} />
             ))}
           </ArticlesGrid>
         ) : (

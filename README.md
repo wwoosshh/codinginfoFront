@@ -1,46 +1,120 @@
-# Getting Started with Create React App
+# 코딩 인포 프론트엔드
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React + TypeScript + Vite 기반의 코딩 정보 공유 플랫폼 프론트엔드
 
-## Available Scripts
+## 📋 프로젝트 개요
 
-In the project directory, you can run:
+일상에서 만나는 프로그래밍 현상들을 쉽고 재미있게 설명하는 블로그 플랫폼의 프론트엔드입니다.
 
-### `npm start`
+## 🛠 기술 스택
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **프레임워크**: React 18
+- **언어**: TypeScript
+- **빌드 도구**: Vite
+- **스타일링**: styled-components
+- **라우팅**: React Router v6
+- **HTTP 클라이언트**: Axios
+- **배포**: Vercel
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 📁 프로젝트 구조
 
-### `npm test`
+```
+src/
+├── components/          # 재사용 가능한 컴포넌트
+│   ├── ArticleCard.tsx
+│   ├── CategoryCard.tsx
+│   ├── Header.tsx
+│   └── LoadingSpinner.tsx
+├── pages/               # 페이지 컴포넌트
+│   ├── HomePage.tsx
+│   ├── CategoryPage.tsx
+│   └── ArticlePage.tsx
+├── services/            # API 서비스
+│   └── api.ts
+├── types/               # TypeScript 타입 정의
+│   └── index.ts
+├── styles/              # 전역 스타일
+│   ├── GlobalStyle.ts
+│   └── theme.ts
+└── App.tsx
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🚀 시작하기
 
-### `npm run build`
+### 필수 조건
+- Node.js 18.0.0 이상
+- npm 또는 yarn
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 설치 및 실행
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+# 의존성 설치
+npm install
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# 개발 서버 실행
+npm run dev
 
-### `npm run eject`
+# 프로덕션 빌드
+npm run build
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# 빌드 미리보기
+npm run preview
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔧 환경 변수
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+`.env` 파일을 생성하고 다음 변수를 설정하세요:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```env
+VITE_API_URL=your_backend_api_url
+```
 
-## Learn More
+## 📝 버전 히스토리
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### v1.3.0 (2024-12-XX)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**주요 변경사항**
+- 백엔드 API v1.3.0과 호환성 개선
+- Article 인터페이스 업데이트 (새로운 필드 추가)
+- API 응답 형식 변경 (pagination 지원)
+- 카테고리 페이지 API 응답 처리 개선
+
+**기술적 개선**
+- `Article` 인터페이스에 새로운 필드 추가:
+  - `status`: 아티클 상태 (draft/published/archived)
+  - `author`: 작성자 정보
+  - `tags`: 태그 배열
+  - `viewCount`: 조회수
+  - `publishedAt`: 발행일
+- `ArticleListResponse` 인터페이스 추가 (pagination 지원)
+- API 서비스 메서드 업데이트 (pagination 파라미터 추가)
+- CategoryPage 컴포넌트의 API 응답 처리 방식 수정
+
+**API 엔드포인트 업데이트**
+- 모든 아티클 관련 API가 pagination 형식으로 응답
+- 백엔드 서버 URL을 프로덕션 환경으로 업데이트
+
+### v1.2.0 (2024-12-XX)
+
+**주요 기능**
+- 초기 프론트엔드 구현
+- 홈페이지, 카테고리 페이지, 아티클 상세 페이지
+- 반응형 디자인 적용
+- 카테고리별 아티클 필터링
+- 검색 기능
+
+**컴포넌트**
+- `ArticleCard`: 아티클 미리보기 카드
+- `CategoryCard`: 카테고리 선택 카드
+- `Header`: 네비게이션 헤더
+- `LoadingSpinner`: 로딩 스피너
+
+## 🔗 관련 링크
+
+- **백엔드 저장소**: [Backend Repository]
+- **배포된 사이트**: [Production URL]
+- **API 문서**: [API Documentation]
+
+## 📞 문의사항
+
+프로젝트 관련 문의사항이 있으시면 이슈를 생성해 주세요.

@@ -1,15 +1,33 @@
 export interface Article {
-  id?: number;
-  _id?: string;
+  _id: string;
   title: string;
   description: string;
   content: string;
   category: Category;
   categoryDisplayName: string;
   slug: string;
+  status: 'draft' | 'published' | 'archived';
+  author: {
+    _id: string;
+    username: string;
+  };
+  tags: string[];
+  viewCount: number;
+  publishedAt?: string;
   imageUrl?: string;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
+}
+
+export interface ArticleListResponse {
+  articles: Article[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalArticles: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  };
 }
 
 export enum Category {
