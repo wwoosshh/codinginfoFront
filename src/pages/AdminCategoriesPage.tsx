@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Category, CategoryInfo, categoryInfoMap } from '../types';
+import { adminApi, CategoryData, CategoryResponse } from '../services/adminApi';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Container = styled.div`
   max-width: 1200px;
@@ -259,8 +260,11 @@ interface CategoryFormData {
 }
 
 const AdminCategoriesPage: React.FC = () => {
+  const [categories, setCategories] = useState<CategoryResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editingCategory, setEditingCategory] = useState<string | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>({
     key: '',
     displayName: '',
@@ -268,9 +272,26 @@ const AdminCategoriesPage: React.FC = () => {
     color: '#2563eb',
   });
 
-  const handleOpenModal = (category?: CategoryInfo) => {
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await adminApi.getCategoryStats();
+      setCategories(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '카테고리를 불러올 수 없습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpenModal = (category?: CategoryResponse) => {
     if (category) {
-      setEditingCategory(category.key);
+      setEditingCategory(category._id);
       setFormData({
         key: category.key,
         displayName: category.displayName,
@@ -294,20 +315,51 @@ const AdminCategoriesPage: React.FC = () => {
     setEditingCategory(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 백엔드 API 연동 시 실제 저장 로직 구현
-    console.log('Category data:', formData);
-    alert(`카테고리 ${editingCategory ? '수정' : '생성'} 기능은 백엔드 API 연동 후 구현됩니다.`);
-    handleCloseModal();
-  };
 
-  const handleDelete = (categoryKey: Category) => {
-    if (window.confirm(`카테고리 "${categoryInfoMap[categoryKey].displayName}"를 삭제하시겠습니까?`)) {
-      // TODO: 백엔드 API 연동 시 실제 삭제 로직 구현
-      alert('카테고리 삭제 기능은 백엔드 API 연동 후 구현됩니다.');
+    if (!formData.key.trim() || !formData.displayName.trim() || !formData.description.trim()) {
+      alert('모든 필드를 입력해주세요.');
+      return;
+    }
+
+    try {
+      if (editingCategory) {
+        const updateData: Partial<CategoryData> = {
+          displayName: formData.displayName.trim(),
+          description: formData.description.trim(),
+          color: formData.color,
+        };
+        await adminApi.updateCategory(editingCategory, updateData);
+      } else {
+        const createData: CategoryData = {
+          key: formData.key.trim().toUpperCase(),
+          displayName: formData.displayName.trim(),
+          description: formData.description.trim(),
+          color: formData.color,
+        };
+        await adminApi.createCategory(createData);
+      }
+
+      await fetchCategories();
+      handleCloseModal();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '저장에 실패했습니다.');
     }
   };
+
+  const handleDelete = async (category: CategoryResponse) => {
+    if (window.confirm(`카테고리 "${category.displayName}"를 삭제하시겠습니까?`)) {
+      try {
+        await adminApi.deleteCategory(category._id);
+        await fetchCategories();
+      } catch (err) {
+        alert(err instanceof Error ? err.message : '삭제에 실패했습니다.');
+      }
+    }
+  };
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <Container>
@@ -318,13 +370,15 @@ const AdminCategoriesPage: React.FC = () => {
         </AddButton>
       </Header>
 
-      <InfoBox>
-        💡 현재는 정적 카테고리 관리만 가능합니다. 백엔드 API 연동 후 실제 CRUD 기능이 구현됩니다.
-      </InfoBox>
+      {error && (
+        <InfoBox style={{ backgroundColor: '#fee2e2', borderColor: '#fecaca', color: '#dc2626' }}>
+          ❌ {error}
+        </InfoBox>
+      )}
 
       <CategoriesGrid>
-        {Object.values(categoryInfoMap).map((category) => (
-          <CategoryCard key={category.key}>
+        {categories.map((category) => (
+          <CategoryCard key={category._id}>
             <CategoryHeader>
               <CategoryBadge color={category.color}>
                 {category.displayName}
@@ -335,7 +389,7 @@ const AdminCategoriesPage: React.FC = () => {
                 </ActionButton>
                 <ActionButton
                   variant="danger"
-                  onClick={() => handleDelete(category.key)}
+                  onClick={() => handleDelete(category)}
                 >
                   삭제
                 </ActionButton>
@@ -345,6 +399,9 @@ const AdminCategoriesPage: React.FC = () => {
             <CategoryTitle>{category.displayName}</CategoryTitle>
             <CategoryDescription>{category.description}</CategoryDescription>
             <CategoryKey>Key: {category.key}</CategoryKey>
+            {category.articlesCount !== undefined && (
+              <CategoryKey>아티클: {category.articlesCount}개</CategoryKey>
+            )}
           </CategoryCard>
         ))}
       </CategoriesGrid>

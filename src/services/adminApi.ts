@@ -122,6 +122,51 @@ export interface SystemHealth {
   version: string;
 }
 
+export interface CreateArticleData {
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  status?: ArticleStatus;
+  tags?: string[];
+  imageUrl?: string;
+  slug?: string;
+}
+
+export interface UpdateArticleData {
+  title?: string;
+  description?: string;
+  content?: string;
+  category?: string;
+  status?: ArticleStatus;
+  tags?: string[];
+  imageUrl?: string;
+  slug?: string;
+}
+
+export interface CategoryData {
+  key: string;
+  displayName: string;
+  description: string;
+  color: string;
+  isActive?: boolean;
+  order?: number;
+}
+
+export interface CategoryResponse {
+  _id: string;
+  key: string;
+  displayName: string;
+  description: string;
+  color: string;
+  isActive: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+  articlesCount?: number;
+  publishedCount?: number;
+}
+
 export const adminApi = {
   // Dashboard
   getDashboardStats: async (): Promise<DashboardStats> => {
@@ -166,6 +211,21 @@ export const adminApi = {
     return response.data;
   },
 
+  getArticleById: async (articleId: string): Promise<Article> => {
+    const response = await api.get<Article>(`/articles/${articleId}`);
+    return response.data;
+  },
+
+  createArticle: async (data: CreateArticleData): Promise<{ message: string; article: Article }> => {
+    const response = await api.post<{ message: string; article: Article }>('/articles', data);
+    return response.data;
+  },
+
+  updateArticle: async (articleId: string, data: UpdateArticleData): Promise<{ message: string; article: Article }> => {
+    const response = await api.put<{ message: string; article: Article }>(`/articles/${articleId}`, data);
+    return response.data;
+  },
+
   updateArticleStatus: async (articleId: string, status: ArticleStatus): Promise<{ message: string; article: Article }> => {
     const response = await api.patch<{ message: string; article: Article }>(`/articles/${articleId}/status`, {
       status,
@@ -175,6 +235,37 @@ export const adminApi = {
 
   deleteArticle: async (articleId: string): Promise<{ message: string }> => {
     const response = await api.delete<{ message: string }>(`/articles/${articleId}`);
+    return response.data;
+  },
+
+  // Categories Management
+  getAllCategories: async (): Promise<CategoryResponse[]> => {
+    const response = await api.get<CategoryResponse[]>('/categories');
+    return response.data;
+  },
+
+  getCategoryStats: async (): Promise<CategoryResponse[]> => {
+    const response = await api.get<CategoryResponse[]>('/categories/stats');
+    return response.data;
+  },
+
+  getCategoryById: async (categoryId: string): Promise<CategoryResponse> => {
+    const response = await api.get<CategoryResponse>(`/categories/${categoryId}`);
+    return response.data;
+  },
+
+  createCategory: async (data: CategoryData): Promise<{ message: string; category: CategoryResponse }> => {
+    const response = await api.post<{ message: string; category: CategoryResponse }>('/categories', data);
+    return response.data;
+  },
+
+  updateCategory: async (categoryId: string, data: Partial<CategoryData>): Promise<{ message: string; category: CategoryResponse }> => {
+    const response = await api.put<{ message: string; category: CategoryResponse }>(`/categories/${categoryId}`, data);
+    return response.data;
+  },
+
+  deleteCategory: async (categoryId: string): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>(`/categories/${categoryId}`);
     return response.data;
   },
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Category, ArticleStatus, categoryInfoMap } from '../types';
-import { adminApi } from '../services/adminApi';
+import { adminApi, CreateArticleData, UpdateArticleData } from '../services/adminApi';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const Container = styled.div`
@@ -255,24 +255,18 @@ const AdminArticleEditPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      // TODO: 개별 아티클 조회 API 구현 필요
-      const articles = await adminApi.getAllArticles({ limit: 1000 });
-      const article = articles.articles.find(a => a._id === articleId);
+      const article = await adminApi.getArticleById(articleId);
 
-      if (article) {
-        setFormData({
-          title: article.title,
-          description: article.description,
-          content: article.content,
-          category: article.category as Category,
-          status: article.status as ArticleStatus,
-          tags: article.tags || [],
-          imageUrl: article.imageUrl || '',
-          slug: article.slug,
-        });
-      } else {
-        setError('아티클을 찾을 수 없습니다.');
-      }
+      setFormData({
+        title: article.title,
+        description: article.description,
+        content: article.content,
+        category: article.category as Category,
+        status: article.status as ArticleStatus,
+        tags: article.tags || [],
+        imageUrl: article.imageUrl || '',
+        slug: article.slug,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : '아티클을 불러올 수 없습니다.');
     } finally {
@@ -316,9 +310,32 @@ const AdminArticleEditPage: React.FC = () => {
     setError(null);
 
     try {
-      // TODO: 아티클 생성/수정 API 구현 필요
-      console.log('Article data:', formData);
-      alert(`아티클 ${isEditing ? '수정' : '생성'} 기능은 백엔드 API 연동 후 구현됩니다.`);
+      if (isEditing && id) {
+        const updateData: UpdateArticleData = {
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          content: formData.content.trim(),
+          category: formData.category,
+          status: formData.status,
+          tags: formData.tags,
+          imageUrl: formData.imageUrl.trim() || undefined,
+          slug: formData.slug.trim(),
+        };
+        await adminApi.updateArticle(id, updateData);
+      } else {
+        const createData: CreateArticleData = {
+          title: formData.title.trim(),
+          description: formData.description.trim(),
+          content: formData.content.trim(),
+          category: formData.category,
+          status: formData.status,
+          tags: formData.tags,
+          imageUrl: formData.imageUrl.trim() || undefined,
+          slug: formData.slug.trim(),
+        };
+        await adminApi.createArticle(createData);
+      }
+
       navigate('/admin/articles');
     } catch (err) {
       setError(err instanceof Error ? err.message : '저장에 실패했습니다.');
@@ -349,9 +366,6 @@ const AdminArticleEditPage: React.FC = () => {
         </HeaderActions>
       </Header>
 
-      <InfoBox>
-        💡 현재는 UI만 구현된 상태입니다. 백엔드 API 연동 후 실제 저장 기능이 구현됩니다.
-      </InfoBox>
 
       {error && <ErrorMessage>{error}</ErrorMessage>}
 
