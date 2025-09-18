@@ -55,20 +55,7 @@ const Logo = styled(Link)`
 `;
 
 const Nav = styled.nav`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  flex: 1;
-  justify-content: center;
-  overflow-x: auto;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
-    gap: ${({ theme }) => theme.spacing.sm};
-  }
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: none;
-  }
+  display: none;
 `;
 
 const NavLink = styled(Link)`
@@ -125,42 +112,76 @@ const SearchInput = styled.input`
   }
 `;
 
-const MobileMenuButton = styled.button`
-  display: none;
+const MenuButton = styled.button`
   background: none;
   border: none;
   font-size: ${({ theme }) => theme.fontSizes.lg};
   color: ${({ theme }) => theme.colors.text};
   padding: ${({ theme }) => theme.spacing.sm};
-  
-  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: block;
+  cursor: pointer;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  transition: ${({ theme }) => theme.transitions.fast};
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.surfaceHover};
   }
 `;
 
-const MobileMenu = styled.div<{ $isOpen: boolean }>`
-  position: absolute;
-  top: 100%;
+const FloatingSidebar = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background: ${({ theme }) => theme.colors.surface};
+  border-right: 1px solid ${({ theme }) => theme.colors.border};
+  box-shadow: ${({ theme }) => theme.shadows.lg};
+  z-index: 1000;
+  transform: translateX(${({ $isOpen }) => ($isOpen ? '0' : '-100%')});
+  transition: transform 0.3s ease-in-out;
+  padding: ${({ theme }) => theme.spacing.xl};
+  overflow-y: auto;
+`;
+
+const Overlay = styled.div<{ $isOpen: boolean }>`
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  background-color: ${({ theme }) => theme.colors.surface};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-  padding: ${({ theme }) => theme.spacing.lg};
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
   display: ${({ $isOpen }) => ($isOpen ? 'block' : 'none')};
-
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: none;
-  }
 `;
 
-const MobileNavLink = styled(Link)`
-  display: block;
+const SidebarHeader = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  padding-bottom: ${({ theme }) => theme.spacing.lg};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+`;
+
+const SidebarTitle = styled.h2`
+  margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => theme.fontSizes.lg};
+`;
+
+const SidebarSubtitle = styled.p`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+`;
+
+const SidebarNavLink = styled(Link)`
+  display: flex;
+  align-items: center;
   color: ${({ theme }) => theme.colors.textSecondary};
   font-weight: 500;
   padding: ${({ theme }) => theme.spacing.md};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
   transition: ${({ theme }) => theme.transitions.fast};
+  text-decoration: none;
 
   &:hover {
     color: ${({ theme }) => theme.colors.text};
@@ -169,6 +190,16 @@ const MobileNavLink = styled(Link)`
 
   &:last-child {
     margin-bottom: 0;
+  }
+
+  &::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    margin-right: ${({ theme }) => theme.spacing.md};
+    opacity: 0.7;
   }
 `;
 
@@ -227,7 +258,7 @@ const LogoutButton = styled.button`
 `;
 
 const Header: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
@@ -252,63 +283,66 @@ const Header: React.FC = () => {
   };
 
   return (
-    <HeaderContainer>
-      <HeaderContent>
-        <Logo to="/">CodingInfo</Logo>
-        
-        <Nav>
-          {Object.values(categoryInfoMap).map((category) => (
-            <NavLink key={category.key} to={`/category/${category.key}`}>
-              {category.displayName}
-            </NavLink>
-          ))}
-        </Nav>
+    <>
+      <Overlay $isOpen={isSidebarOpen} onClick={() => setIsSidebarOpen(false)} />
+      <FloatingSidebar $isOpen={isSidebarOpen}>
+        <SidebarHeader>
+          <SidebarTitle>카테고리</SidebarTitle>
+          <SidebarSubtitle>관심 있는 주제를 선택하세요</SidebarSubtitle>
+        </SidebarHeader>
 
-        <SearchContainer>
-          <form onSubmit={handleSearch}>
-            <SearchInput
-              type="text"
-              placeholder="검색..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </form>
-        </SearchContainer>
-
-        <UserSection>
-          {user ? (
-            <>
-              <UserInfo>
-                <span>{user.username}</span>
-                {user.role === 'admin' && <span>👑</span>}
-              </UserInfo>
-              {user.role === 'admin' && (
-                <AuthButton to="/admin">관리자</AuthButton>
-              )}
-              <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
-            </>
-          ) : (
-            <AuthButton to="/login">로그인</AuthButton>
-          )}
-        </UserSection>
-
-        <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          ☰
-        </MobileMenuButton>
-      </HeaderContent>
-
-      <MobileMenu $isOpen={isMobileMenuOpen}>
         {Object.values(categoryInfoMap).map((category) => (
-          <MobileNavLink
+          <SidebarNavLink
             key={category.key}
             to={`/category/${category.key}`}
-            onClick={() => setIsMobileMenuOpen(false)}
+            onClick={() => setIsSidebarOpen(false)}
           >
             {category.displayName}
-          </MobileNavLink>
+          </SidebarNavLink>
         ))}
-      </MobileMenu>
-    </HeaderContainer>
+      </FloatingSidebar>
+
+      <HeaderContainer>
+        <HeaderContent>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <MenuButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+              ☰
+            </MenuButton>
+            <Logo to="/">CodingInfo</Logo>
+          </div>
+
+          <Nav />
+
+          <SearchContainer>
+            <form onSubmit={handleSearch}>
+              <SearchInput
+                type="text"
+                placeholder="검색..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
+          </SearchContainer>
+
+          <UserSection>
+            {user ? (
+              <>
+                <UserInfo>
+                  <span>{user.username}</span>
+                  {user.role === 'admin' && <span>👑</span>}
+                </UserInfo>
+                {user.role === 'admin' && (
+                  <AuthButton to="/admin">관리자</AuthButton>
+                )}
+                <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+              </>
+            ) : (
+              <AuthButton to="/login">로그인</AuthButton>
+            )}
+          </UserSection>
+        </HeaderContent>
+      </HeaderContainer>
+    </>
   );
 };
 

@@ -127,10 +127,12 @@ const ArticleDescription = styled.div`
 `;
 
 const StatusBadge = styled.span<{ status: string }>`
+  display: inline-block;
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.borderRadius.full};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: 600;
+  white-space: nowrap;
   background: ${({ status, theme }) => {
     switch (status) {
       case 'published':
@@ -158,10 +160,12 @@ const StatusBadge = styled.span<{ status: string }>`
 `;
 
 const CategoryBadge = styled.span<{ color: string }>`
+  display: inline-block;
   padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.borderRadius.full};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: 600;
+  white-space: nowrap;
   background: ${({ color }) => color + '20'};
   color: ${({ color }) => color};
 `;
