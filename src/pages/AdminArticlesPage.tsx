@@ -361,6 +361,7 @@ const AdminArticlesPage: React.FC = () => {
             <option value="archived">보관됨</option>
           </FilterSelect>
         </Controls>
+        </div>
       </Header>
 
       {error ? (
