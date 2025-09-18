@@ -9,21 +9,34 @@ import ArticlePage from './pages/ArticlePage';
 import CategoryPage from './pages/CategoryPage';
 import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminArticlesPage from './pages/AdminArticlesPage';
+import AdminSystemPage from './pages/AdminSystemPage';
+import AdminLayout from './components/AdminLayout';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/article/:slug" element={<ArticlePage />} />
-            <Route path="/category/:category" element={<CategoryPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/admin" element={<AdminPage />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="articles" element={<AdminArticlesPage />} />
+            <Route path="system" element={<AdminSystemPage />} />
+          </Route>
+          <Route path="/*" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/article/:slug" element={<ArticlePage />} />
+                <Route path="/category/:category" element={<CategoryPage />} />
+                <Route path="/login" element={<LoginPage />} />
+              </Routes>
+            </Layout>
+          } />
+        </Routes>
       </Router>
     </ThemeProvider>
   );
