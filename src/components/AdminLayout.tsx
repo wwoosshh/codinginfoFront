@@ -145,6 +145,11 @@ const AdminLayout: React.FC = () => {
             </NavLink>
           </NavItem>
           <NavItem>
+            <NavLink to="/admin/categories" $active={isActive('/admin/categories')}>
+              카테고리 관리
+            </NavLink>
+          </NavItem>
+          <NavItem>
             <NavLink to="/admin/system" $active={isActive('/admin/system')}>
               시스템 모니터링
             </NavLink>

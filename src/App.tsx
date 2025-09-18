@@ -11,6 +11,8 @@ import LoginPage from './pages/LoginPage';
 import AdminPage from './pages/AdminPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminArticlesPage from './pages/AdminArticlesPage';
+import AdminCategoriesPage from './pages/AdminCategoriesPage';
+import AdminArticleEditPage from './pages/AdminArticleEditPage';
 import AdminSystemPage from './pages/AdminSystemPage';
 import AdminLayout from './components/AdminLayout';
 
@@ -24,6 +26,9 @@ function App() {
             <Route index element={<AdminPage />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="articles" element={<AdminArticlesPage />} />
+            <Route path="articles/new" element={<AdminArticleEditPage />} />
+            <Route path="articles/:id" element={<AdminArticleEditPage />} />
+            <Route path="categories" element={<AdminCategoriesPage />} />
             <Route path="system" element={<AdminSystemPage />} />
           </Route>
           <Route path="/*" element={

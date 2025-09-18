@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { adminApi, AdminArticleListResponse } from '../services/adminApi';
 import { Article, ArticleStatus, Category, categoryInfoMap } from '../types';
@@ -329,7 +330,16 @@ const AdminArticlesPage: React.FC = () => {
     <Container>
       <Header>
         <Title>아티클 관리</Title>
-        <Controls>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Link to="/admin/articles/new" style={{
+            padding: '8px 16px',
+            background: '#2563eb',
+            color: 'white',
+            textDecoration: 'none',
+            borderRadius: '6px',
+            fontWeight: '500'
+          }}>새 아티클 작성</Link>
+          <Controls>
           <SearchInput
             type="text"
             placeholder="제목 또는 설명 검색..."
@@ -376,7 +386,11 @@ const AdminArticlesPage: React.FC = () => {
                 {articles.map((article) => (
                   <TableRow key={article._id}>
                     <TableCell>
-                      <ArticleTitle>{article.title}</ArticleTitle>
+                      <Link to={`/admin/articles/${article._id}`} style={{ textDecoration: 'none' }}>
+                        <ArticleTitle style={{ cursor: 'pointer', color: '#2563eb' }}>
+                          {article.title}
+                        </ArticleTitle>
+                      </Link>
                       <ArticleDescription>{article.description}</ArticleDescription>
                     </TableCell>
                     <TableCell>
