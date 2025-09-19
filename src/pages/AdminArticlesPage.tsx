@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { adminApi, AdminArticleListResponse } from '../services/adminApi';
-import { Article, ArticleStatus, Category, categoryInfoMap } from '../types';
+import { Article, ArticleStatus, Category } from '../types';
+import { categoryApi } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const Container = styled.div`
@@ -250,6 +251,7 @@ const EmptyState = styled.div`
 
 const AdminArticlesPage: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [pagination, setPagination] = useState<AdminArticleListResponse['pagination'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -279,7 +281,17 @@ const AdminArticlesPage: React.FC = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const data = await categoryApi.getAllCategories();
+      setCategories(data);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
+
   useEffect(() => {
+    fetchCategories();
     fetchArticles(1);
   }, [searchQuery, categoryFilter, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -346,7 +358,7 @@ const AdminArticlesPage: React.FC = () => {
           />
           <FilterSelect value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
             <option value="">모든 카테고리</option>
-            {Object.values(categoryInfoMap).map((category) => (
+            {categories.map((category) => (
               <option key={category.key} value={category.key}>
                 {category.displayName}
               </option>
@@ -395,8 +407,8 @@ const AdminArticlesPage: React.FC = () => {
                       {article.author?.username || 'Unknown'}
                     </TableCell>
                     <TableCell>
-                      <CategoryBadge color={categoryInfoMap[article.category as Category]?.color || '#gray'}>
-                        {article.categoryDisplayName}
+                      <CategoryBadge color={article.categoryColor || '#6b7280'}>
+                        {article.categoryDisplayName || article.category}
                       </CategoryBadge>
                     </TableCell>
                     <TableCell>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, ArticleListResponse, categoryInfoMap } from '../types';
-import { articleApi } from '../services/api';
+import { Article, ArticleListResponse, Category } from '../types';
+import { articleApi, categoryApi } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import CategoryCard from '../components/CategoryCard';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -74,6 +74,7 @@ const NoResults = styled.div`
 
 const HomePage: React.FC = () => {
   const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [pagination, setPagination] = useState<ArticleListResponse['pagination'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -81,20 +82,19 @@ const HomePage: React.FC = () => {
   const searchQuery = searchParams.get('search');
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        let result: ArticleListResponse;
-        if (searchQuery) {
-          result = await articleApi.searchArticles(searchQuery);
-        } else {
-          result = await articleApi.getAllArticles();
-        }
+        const [articlesResult, categoriesResult] = await Promise.all([
+          searchQuery ? articleApi.searchArticles(searchQuery) : articleApi.getAllArticles(),
+          categoryApi.getAllCategories()
+        ]);
 
-        setArticles(result.articles);
-        setPagination(result.pagination);
+        setArticles(articlesResult.articles);
+        setPagination(articlesResult.pagination);
+        setCategories(categoriesResult);
       } catch (err) {
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
       }
     };
 
-    fetchArticles();
+    fetchData();
   }, [searchQuery]);
 
   if (loading) return <LoadingSpinner />;
@@ -133,7 +133,7 @@ const HomePage: React.FC = () => {
           <Section>
             <SectionTitle>카테고리별 탐험</SectionTitle>
             <CategoriesGrid>
-              {Object.values(categoryInfoMap).map((category) => (
+              {categories.map((category) => (
                 <CategoryCard key={category.key} category={category} />
               ))}
             </CategoriesGrid>

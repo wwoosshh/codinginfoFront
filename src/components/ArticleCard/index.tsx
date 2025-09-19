@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, categoryInfoMap } from '../../types';
+import { Article } from '../../types';
 
 const Card = styled(Link)`
   display: block;
@@ -103,7 +103,6 @@ interface ArticleCardProps {
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
-  const categoryInfo = categoryInfoMap[article.category];
   const formattedDate = new Date(article.createdAt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'short',
@@ -113,8 +112,8 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
   return (
     <Card to={`/article/${article.slug}`}>
       <CardHeader>
-        <CategoryBadge color={categoryInfo.color}>
-          {categoryInfo.displayName}
+        <CategoryBadge color={article.categoryColor || '#6b7280'}>
+          {article.categoryDisplayName || article.category}
         </CategoryBadge>
       </CardHeader>
 

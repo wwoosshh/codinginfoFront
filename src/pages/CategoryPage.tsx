@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, Category, categoryInfoMap } from '../types';
-import { articleApi } from '../services/api';
+import { Article, Category } from '../types';
+import { articleApi, categoryApi } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import LoadingSpinner from '../components/LoadingSpinner';
 
@@ -80,14 +80,13 @@ const ErrorMessage = styled.p`
 const CategoryPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const [articles, setArticles] = useState<Article[]>([]);
+  const [categoryInfo, setCategoryInfo] = useState<Category | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const categoryInfo = category ? categoryInfoMap[category as Category] : null;
-
   useEffect(() => {
-    const fetchArticles = async () => {
-      if (!category || !categoryInfo) {
+    const fetchData = async () => {
+      if (!category) {
         setError('유효하지 않은 카테고리입니다.');
         setLoading(false);
         return;
@@ -96,17 +95,32 @@ const CategoryPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const result = await articleApi.getArticlesByCategory(category as Category);
-        setArticles(result.articles);
+
+        // 카테고리 정보와 아티클을 병렬로 가져오기
+        const [categoriesResult, articlesResult] = await Promise.all([
+          categoryApi.getAllCategories(),
+          articleApi.getArticlesByCategory(category)
+        ]);
+
+        // 현재 카테고리 정보 찾기
+        const currentCategory = categoriesResult.find(cat => cat.key === category.toUpperCase());
+        if (!currentCategory) {
+          setError('유효하지 않은 카테고리입니다.');
+          setLoading(false);
+          return;
+        }
+
+        setCategoryInfo(currentCategory);
+        setArticles(articlesResult.articles);
       } catch (err) {
-        setError(err instanceof Error ? err.message : '아티클을 불러올 수 없습니다.');
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchArticles();
-  }, [category, categoryInfo]);
+    fetchData();
+  }, [category]);
 
   if (loading) return <LoadingSpinner />;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Article, categoryInfoMap } from '../types';
+import { Article } from '../types';
 import { articleApi } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import MarkdownRenderer from '../components/MarkdownRenderer';
@@ -141,7 +141,6 @@ const ArticlePage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const categoryInfo = categoryInfoMap[article.category];
   const formattedDate = new Date(article.createdAt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
@@ -151,8 +150,8 @@ const ArticlePage: React.FC = () => {
   return (
     <Container>
       <ArticleHeader>
-        <CategoryBadge color={categoryInfo.color}>
-          {categoryInfo.displayName}
+        <CategoryBadge color={article.categoryColor || '#6b7280'}>
+          {article.categoryDisplayName || article.category}
         </CategoryBadge>
         <Title>{article.title}</Title>
         <Description>{article.description}</Description>

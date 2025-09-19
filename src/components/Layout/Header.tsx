@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { categoryInfoMap } from '../../types';
+import { Category } from '../../types';
 import { authService, User } from '../../services/authApi';
+import { categoryApi } from '../../services/api';
 
 const HeaderContainer = styled.header`
   background-color: ${({ theme }) => theme.colors.surface};
@@ -242,12 +243,23 @@ const Header: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState<User | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     const currentUser = authService.getCurrentUser();
     setUser(currentUser);
+    fetchCategories();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await categoryApi.getAllCategories();
+      setCategories(data);
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -272,7 +284,7 @@ const Header: React.FC = () => {
           <SidebarSubtitle>관심 있는 주제를 선택하세요</SidebarSubtitle>
         </SidebarHeader>
 
-        {Object.values(categoryInfoMap).map((category) => (
+        {categories.map((category) => (
           <SidebarNavLink
             key={category.key}
             to={`/category/${category.key}`}

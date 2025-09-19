@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { CategoryInfo } from '../../types';
+import { Category } from '../../types';
 
 interface CardProps {
   $color: string;
@@ -101,7 +101,7 @@ const getIconForCategory = (categoryKey: string): string => {
 };
 
 interface CategoryCardProps {
-  category: CategoryInfo;
+  category: Category;
 }
 
 const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
