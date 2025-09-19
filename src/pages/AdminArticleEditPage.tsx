@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Category, ArticleStatus, categoryInfoMap } from '../types';
+import { Category, ArticleStatus } from '../types';
 import { adminApi, CreateArticleData, UpdateArticleData } from '../services/adminApi';
+import { categoryApi } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 const Container = styled.div`
@@ -219,7 +220,7 @@ interface ArticleFormData {
   title: string;
   description: string;
   content: string;
-  category: Category;
+  category: string;
   status: ArticleStatus;
   tags: string[];
   imageUrl: string;
@@ -234,11 +235,12 @@ const AdminArticleEditPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [formData, setFormData] = useState<ArticleFormData>({
     title: '',
     description: '',
     content: '',
-    category: Category.ALGORITHM,
+    category: '',
     status: ArticleStatus.DRAFT,
     tags: [],
     imageUrl: '',
@@ -246,10 +248,24 @@ const AdminArticleEditPage: React.FC = () => {
   });
 
   useEffect(() => {
+    fetchCategories();
     if (isEditing && id) {
       fetchArticle(id);
     }
   }, [id, isEditing]);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await categoryApi.getAllCategories();
+      setCategories(data);
+      // 카테고리가 로드되면 첫 번째 카테고리를 기본값으로 설정 (새 아티클일 때만)
+      if (!isEditing && data.length > 0 && !formData.category) {
+        setFormData(prev => ({ ...prev, category: data[0].key }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch categories:', err);
+    }
+  };
 
   const fetchArticle = async (articleId: string) => {
     try {
@@ -261,7 +277,7 @@ const AdminArticleEditPage: React.FC = () => {
         title: article.title,
         description: article.description,
         content: article.content,
-        category: article.category as Category,
+        category: article.category,
         status: article.status as ArticleStatus,
         tags: article.tags || [],
         imageUrl: article.imageUrl || '',
@@ -401,10 +417,10 @@ const AdminArticleEditPage: React.FC = () => {
             <Select
               id="category"
               value={formData.category}
-              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value as Category }))}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
               required
             >
-              {Object.values(categoryInfoMap).map((category) => (
+              {categories.map((category) => (
                 <option key={category.key} value={category.key}>
                   {category.displayName}
                 </option>

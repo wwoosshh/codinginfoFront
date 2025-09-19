@@ -1,5 +1,17 @@
 import axios from 'axios';
-import { Article, Category, ArticleListResponse } from '../types';
+import { Article, ArticleListResponse } from '../types';
+
+export interface CategoryResponse {
+  _id: string;
+  key: string;
+  displayName: string;
+  description: string;
+  color: string;
+  isActive: boolean;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://codinginfoback-production.up.railway.app';
 
@@ -24,9 +36,9 @@ export const articleApi = {
     return response.data;
   },
 
-  getArticlesByCategory: async (category: Category, page: number = 1, limit: number = 10): Promise<ArticleListResponse> => {
-    const response = await api.get<ArticleListResponse>(`/articles/category/${category}`, {
-      params: { page, limit }
+  getArticlesByCategory: async (category: string, page: number = 1, limit: number = 10): Promise<ArticleListResponse> => {
+    const response = await api.get<ArticleListResponse>('/articles', {
+      params: { page, limit, category }
     });
     return response.data;
   },
@@ -35,6 +47,13 @@ export const articleApi = {
     const response = await api.get<ArticleListResponse>('/articles/search', {
       params: { keyword, page, limit },
     });
+    return response.data;
+  },
+};
+
+export const categoryApi = {
+  getAllCategories: async (): Promise<CategoryResponse[]> => {
+    const response = await api.get<CategoryResponse[]>('/categories');
     return response.data;
   },
 };
