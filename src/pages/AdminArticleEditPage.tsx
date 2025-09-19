@@ -206,15 +206,6 @@ const ErrorMessage = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
-const InfoBox = styled.div`
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
-  border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  padding: ${({ theme }) => theme.spacing.md};
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-`;
 
 interface ArticleFormData {
   title: string;
@@ -252,6 +243,7 @@ const AdminArticleEditPage: React.FC = () => {
     if (isEditing && id) {
       fetchArticle(id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, isEditing]);
 
   const fetchCategories = async () => {
