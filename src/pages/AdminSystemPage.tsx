@@ -226,10 +226,6 @@ const AdminSystemPage: React.FC = () => {
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const getMemoryUsagePercentage = (used: number, total: number) => {
-    return Math.round((used / total) * 100);
-  };
-
   if (loading) return <LoadingSpinner />;
 
   if (error) {
@@ -242,11 +238,6 @@ const AdminSystemPage: React.FC = () => {
 
   if (!systemHealth) return null;
 
-  const memoryUsagePercentage = getMemoryUsagePercentage(
-    systemHealth.memory.heapUsed,
-    systemHealth.memory.heapTotal
-  );
-
   return (
     <Container>
       <Header>
@@ -258,11 +249,12 @@ const AdminSystemPage: React.FC = () => {
 
       <StatusGrid>
         <StatusCard>
-          <CardTitle>전체 상태</CardTitle>
+          <CardTitle>시스템 상태</CardTitle>
           <StatusItem>
-            <StatusLabel>시스템 상태</StatusLabel>
+            <StatusLabel>전체 상태</StatusLabel>
             <HealthIndicator healthy={systemHealth.status === 'healthy'}>
-              {systemHealth.status === 'healthy' ? '정상' : '오류'}
+              {systemHealth.status === 'healthy' ? '정상' :
+               systemHealth.status === 'degraded' ? '저하됨' : '오류'}
             </HealthIndicator>
           </StatusItem>
           <StatusItem>
@@ -273,53 +265,87 @@ const AdminSystemPage: React.FC = () => {
             <StatusLabel>버전</StatusLabel>
             <StatusValue>{systemHealth.version}</StatusValue>
           </StatusItem>
+          <StatusItem>
+            <StatusLabel>환경</StatusLabel>
+            <StatusValue>{systemHealth.environment}</StatusValue>
+          </StatusItem>
         </StatusCard>
 
         <StatusCard>
-          <CardTitle>데이터베이스</CardTitle>
+          <CardTitle>서비스 연결 상태</CardTitle>
           <StatusItem>
-            <StatusLabel>연결 상태</StatusLabel>
-            <HealthIndicator healthy={systemHealth.database.connected}>
-              {systemHealth.database.status}
+            <StatusLabel>MongoDB Atlas</StatusLabel>
+            <HealthIndicator healthy={systemHealth.services.mongodb.connected}>
+              {systemHealth.services.mongodb.status}
             </HealthIndicator>
           </StatusItem>
           <StatusItem>
-            <StatusLabel>아티클 수</StatusLabel>
-            <StatusValue>{systemHealth.collections.articles}</StatusValue>
-          </StatusItem>
-          <StatusItem>
-            <StatusLabel>사용자 수</StatusLabel>
-            <StatusValue>{systemHealth.collections.users}</StatusValue>
+            <StatusLabel>Cloudinary 이미지</StatusLabel>
+            <HealthIndicator healthy={systemHealth.services.cloudinary.connected}>
+              {systemHealth.services.cloudinary.status}
+            </HealthIndicator>
           </StatusItem>
         </StatusCard>
 
         <StatusCard>
-          <CardTitle>메모리 사용량</CardTitle>
+          <CardTitle>데이터 통계</CardTitle>
           <StatusItem>
-            <StatusLabel>힙 사용량</StatusLabel>
+            <StatusLabel>총 아티클</StatusLabel>
+            <StatusValue>{systemHealth.collections.articles.toLocaleString()}</StatusValue>
+          </StatusItem>
+          <StatusItem>
+            <StatusLabel>총 사용자</StatusLabel>
+            <StatusValue>{systemHealth.collections.users.toLocaleString()}</StatusValue>
+          </StatusItem>
+        </StatusCard>
+
+        <StatusCard>
+          <CardTitle>프로세스 메모리 (Node.js)</CardTitle>
+          <StatusItem>
+            <StatusLabel>힙 사용률</StatusLabel>
             <div style={{ flex: 1, marginLeft: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <span>{formatBytes(systemHealth.memory.heapUsed)}</span>
-                <span>{formatBytes(systemHealth.memory.heapTotal)}</span>
+                <span>{systemHealth.memory.heapUsagePercent}%</span>
               </div>
               <MemoryBar>
-                <MemoryFill percentage={memoryUsagePercentage} />
+                <MemoryFill percentage={systemHealth.memory.heapUsagePercent} />
               </MemoryBar>
             </div>
           </StatusItem>
           <StatusItem>
-            <StatusLabel>RSS</StatusLabel>
+            <StatusLabel>힙 총 크기</StatusLabel>
+            <StatusValue>{formatBytes(systemHealth.memory.heapTotal)}</StatusValue>
+          </StatusItem>
+          <StatusItem>
+            <StatusLabel>RSS (상주 메모리)</StatusLabel>
             <StatusValue>{formatBytes(systemHealth.memory.rss)}</StatusValue>
           </StatusItem>
           <StatusItem>
-            <StatusLabel>External</StatusLabel>
+            <StatusLabel>External (C++ 객체)</StatusLabel>
             <StatusValue>{formatBytes(systemHealth.memory.external)}</StatusValue>
+          </StatusItem>
+        </StatusCard>
+
+        <StatusCard>
+          <CardTitle>시스템 정보</CardTitle>
+          <StatusItem>
+            <StatusLabel>Node.js 버전</StatusLabel>
+            <StatusValue>{systemHealth.node.version}</StatusValue>
+          </StatusItem>
+          <StatusItem>
+            <StatusLabel>플랫폼</StatusLabel>
+            <StatusValue>{systemHealth.node.platform}</StatusValue>
+          </StatusItem>
+          <StatusItem>
+            <StatusLabel>아키텍처</StatusLabel>
+            <StatusValue>{systemHealth.node.arch}</StatusValue>
           </StatusItem>
         </StatusCard>
       </StatusGrid>
 
       <StatusCard>
-        <CardTitle>시스템 메트릭</CardTitle>
+        <CardTitle>핵심 메트릭 요약</CardTitle>
         <MetricGrid>
           <MetricCard>
             <MetricValue>{systemHealth.collections.articles}</MetricValue>
@@ -330,12 +356,20 @@ const AdminSystemPage: React.FC = () => {
             <MetricLabel>총 사용자</MetricLabel>
           </MetricCard>
           <MetricCard>
-            <MetricValue>{memoryUsagePercentage}%</MetricValue>
-            <MetricLabel>메모리 사용률</MetricLabel>
+            <MetricValue>{systemHealth.memory.heapUsagePercent}%</MetricValue>
+            <MetricLabel>힙 메모리 사용률</MetricLabel>
           </MetricCard>
           <MetricCard>
             <MetricValue>{formatUptime(systemHealth.uptime)}</MetricValue>
             <MetricLabel>가동 시간</MetricLabel>
+          </MetricCard>
+          <MetricCard>
+            <MetricValue>{systemHealth.services.mongodb.connected && systemHealth.services.cloudinary.connected ? '정상' : '주의'}</MetricValue>
+            <MetricLabel>서비스 상태</MetricLabel>
+          </MetricCard>
+          <MetricCard>
+            <MetricValue>{formatBytes(systemHealth.memory.rss)}</MetricValue>
+            <MetricLabel>실제 메모리 사용량</MetricLabel>
           </MetricCard>
         </MetricGrid>
       </StatusCard>

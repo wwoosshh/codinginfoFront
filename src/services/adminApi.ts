@@ -104,22 +104,42 @@ export interface AdminArticleListResponse {
 export interface SystemHealth {
   status: string;
   timestamp: string;
-  database: {
-    status: string;
-    connected: boolean;
+  version: string;
+  environment: string;
+  uptime: number;
+  services: {
+    mongodb: {
+      status: string;
+      connected: boolean;
+      name: string;
+    };
+    cloudinary: {
+      status: string;
+      connected: boolean;
+      name: string;
+    };
   };
   collections: {
     articles: number;
     users: number;
   };
-  uptime: number;
   memory: {
     rss: number;
     heapTotal: number;
     heapUsed: number;
     external: number;
+    heapUsagePercent: number;
   };
-  version: string;
+  cpu: {
+    user: number;
+    system: number;
+    note: string;
+  };
+  node: {
+    version: string;
+    platform: string;
+    arch: string;
+  };
 }
 
 export interface CreateArticleData {

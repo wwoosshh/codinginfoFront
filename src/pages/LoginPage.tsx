@@ -107,7 +107,8 @@ const LoginPage: React.FC = () => {
       await authService.login(formData);
       setSuccess('로그인 성공!');
       setTimeout(() => {
-        navigate('/');
+        // 페이지 새로고침으로 인증 상태 즉시 반영
+        window.location.href = '/';
       }, 1000);
     } catch (err: any) {
       setError(err.response?.data?.message || '로그인에 실패했습니다.');
