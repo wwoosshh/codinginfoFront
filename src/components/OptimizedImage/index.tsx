@@ -96,7 +96,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     if (isInView && !isLoaded && !isError) {
       handleImageStart();
     }
-  }, [isInView, isLoaded, isError, optimizedSrc]);
+  }, [isInView, isLoaded, isError, optimizedSrc, handleImageStart]);
 
   if (!isValidSrc && !fallbackSrc) {
     return (

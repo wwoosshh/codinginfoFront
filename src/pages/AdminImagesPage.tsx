@@ -177,7 +177,7 @@ const AdminImagesPage: React.FC = () => {
 
   useEffect(() => {
     fetchImages();
-  }, [showUnusedOnly]);
+  }, [showUnusedOnly, fetchImages]);
 
   if (loading) {
     return (

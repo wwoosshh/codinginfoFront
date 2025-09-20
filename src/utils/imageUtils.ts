@@ -168,7 +168,7 @@ export const extractImageMetadata = (url: string): ImageMetadata => {
 
   if (metadata.isCloudinary) {
     // Cloudinary URL 패턴: https://res.cloudinary.com/{cloud_name}/image/upload/v{version}/{public_id}.{format}
-    const match = url.match(/cloudinary\.com\/([^\/]+)\/image\/upload\/(?:.*\/)?v(\d+)\/(.+?)\.(\w+)$/);
+    const match = url.match(/cloudinary\.com\/([^/]+)\/image\/upload\/(?:.*\/)?v(\d+)\/(.+?)\.(\w+)$/);
     if (match) {
       metadata.cloudName = match[1];
       metadata.version = match[2];
