@@ -5,6 +5,8 @@ import { Category, ArticleStatus } from '../types';
 import { adminApi, CreateArticleData, UpdateArticleData } from '../services/adminApi';
 import { categoryApi } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ImageUploader from '../components/ImageUploader';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 const Container = styled.div`
   max-width: 1000px;
@@ -206,6 +208,137 @@ const ErrorMessage = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.lg};
 `;
 
+const ImageUploaderSection = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
+`;
+
+const EditorContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${({ theme }) => theme.spacing.lg};
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const EditorSection = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const PreviewSection = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const EditorLabel = styled.h3`
+  margin: 0 0 ${({ theme }) => theme.spacing.md} 0;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: 600;
+`;
+
+const PreviewContainer = styled.div`
+  min-height: 400px;
+  padding: ${({ theme }) => theme.spacing.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background: ${({ theme }) => theme.colors.surface};
+  overflow-y: auto;
+  font-family: ${({ theme }) => theme.fonts.body};
+  line-height: 1.6;
+
+  /* Markdown 스타일링 */
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: ${({ theme }) => theme.spacing.lg};
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+    color: ${({ theme }) => theme.colors.text};
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  p {
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  ul, ol {
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+    padding-left: ${({ theme }) => theme.spacing.lg};
+  }
+
+  li {
+    margin-bottom: ${({ theme }) => theme.spacing.sm};
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  blockquote {
+    border-left: 4px solid ${({ theme }) => theme.colors.primary};
+    padding-left: ${({ theme }) => theme.spacing.md};
+    margin: ${({ theme }) => theme.spacing.md} 0;
+    color: ${({ theme }) => theme.colors.textMuted};
+    font-style: italic;
+  }
+
+  code {
+    background: ${({ theme }) => theme.colors.backgroundSecondary};
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ${({ theme }) => theme.fonts.code};
+    font-size: 0.9em;
+  }
+
+  pre {
+    background: ${({ theme }) => theme.colors.backgroundSecondary};
+    padding: ${({ theme }) => theme.spacing.md};
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    overflow-x: auto;
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    margin: ${({ theme }) => theme.spacing.md} 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: ${({ theme }) => theme.spacing.md};
+  }
+
+  th, td {
+    border: 1px solid ${({ theme }) => theme.colors.border};
+    padding: ${({ theme }) => theme.spacing.sm};
+    text-align: left;
+  }
+
+  th {
+    background: ${({ theme }) => theme.colors.backgroundSecondary};
+    font-weight: 600;
+  }
+`;
+
+const EmptyPreview = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: ${({ theme }) => theme.colors.textMuted};
+  font-style: italic;
+  text-align: center;
+`;
+
 
 interface ArticleFormData {
   title: string;
@@ -304,6 +437,15 @@ const AdminArticleEditPage: React.FC = () => {
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0);
     setFormData(prev => ({ ...prev, tags }));
+  };
+
+  const handleImageUpload = (imageUrl: string) => {
+    // 마크다운 이미지 문법으로 콘텐츠에 추가
+    const imageMarkdown = `\n![이미지 설명](${imageUrl})\n`;
+    setFormData(prev => ({
+      ...prev,
+      content: prev.content + imageMarkdown
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -469,13 +611,41 @@ const AdminArticleEditPage: React.FC = () => {
 
         <FormGroup>
           <Label htmlFor="content">내용 * (Markdown 지원)</Label>
-          <ContentEditor
-            id="content"
-            value={formData.content}
-            onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-            placeholder="Markdown 형식으로 아티클 내용을 작성하세요..."
-            required
-          />
+
+          {/* 이미지 업로더 */}
+          <ImageUploaderSection>
+            <ImageUploader
+              onImageUpload={handleImageUpload}
+              disabled={saving}
+            />
+          </ImageUploaderSection>
+
+          {/* 콘텐츠 에디터와 미리보기 */}
+          <EditorContainer>
+            <EditorSection>
+              <EditorLabel>마크다운 편집기</EditorLabel>
+              <ContentEditor
+                id="content"
+                value={formData.content}
+                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                placeholder="Markdown 형식으로 아티클 내용을 작성하세요..."
+                required
+              />
+            </EditorSection>
+
+            <PreviewSection>
+              <EditorLabel>실시간 미리보기</EditorLabel>
+              <PreviewContainer>
+                {formData.content.trim() ? (
+                  <MarkdownRenderer content={formData.content} />
+                ) : (
+                  <EmptyPreview>
+                    마크다운 내용을 입력하면 여기에 미리보기가 표시됩니다.
+                  </EmptyPreview>
+                )}
+              </PreviewContainer>
+            </PreviewSection>
+          </EditorContainer>
         </FormGroup>
       </Form>
     </Container>
