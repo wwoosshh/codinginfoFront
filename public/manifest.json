@@ -1,16 +1,28 @@
 {
   "short_name": "CodingInfo",
-  "name": "코딩 정보 사이트",
-  "description": "프로그래밍 현상들을 쉽고 재미있게 설명하는 사이트",
+  "name": "CodingInfo - 프로그래밍 학습 플랫폼",
+  "description": "프로그래밍 학습을 위한 종합 플랫폼 - 코딩 지식을 공유하고 배우는 커뮤니티",
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#2563eb",
-  "background_color": "#ffffff"
+  "theme_color": "#007acc",
+  "background_color": "#ffffff",
+  "categories": ["education", "productivity", "developer"],
+  "lang": "ko"
 }

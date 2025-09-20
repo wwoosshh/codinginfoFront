@@ -1,3 +1,10 @@
 # https://www.robotstxt.org/robotstxt.html
+# CodingInfo - 프로그래밍 학습 플랫폼
+
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /login
+Disallow: /api/
+
+Sitemap: https://codinginfo.vercel.app/sitemap.xml
