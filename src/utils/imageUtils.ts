@@ -62,7 +62,7 @@ export const transformCloudinaryUrl = (
 
   const transformString = transforms.length > 0 ? transforms.join('/') + '/' : '';
 
-  return beforeUpload + transformString + pathWithoutUpload;
+  return beforeUpload + transformString + pathWithoutTransforms;
 };
 
 /**
