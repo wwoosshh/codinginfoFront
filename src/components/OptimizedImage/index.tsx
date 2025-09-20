@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import {
   getImageVariant,
@@ -87,16 +87,16 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
     onError?.();
   };
 
-  const handleImageStart = () => {
+  const handleImageStart = useCallback(() => {
     tracker.startTracking(optimizedSrc);
-  };
+  }, [optimizedSrc]);
 
   // 로딩 시작 트래킹
   useEffect(() => {
     if (isInView && !isLoaded && !isError) {
       handleImageStart();
     }
-  }, [isInView, isLoaded, isError, optimizedSrc, handleImageStart]);
+  }, [isInView, isLoaded, isError, handleImageStart]);
 
   if (!isValidSrc && !fallbackSrc) {
     return (

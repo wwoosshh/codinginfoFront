@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { authService } from '../services/authApi';
 import OptimizedImage from '../components/OptimizedImage';
@@ -39,7 +39,7 @@ const AdminImagesPage: React.FC = () => {
   const [showUnusedOnly, setShowUnusedOnly] = useState(false);
 
   // 이미지 목록 불러오기
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     try {
       setLoading(true);
       const token = authService.getToken();
@@ -66,7 +66,7 @@ const AdminImagesPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showUnusedOnly]);
 
   // 이미지 삭제
   const deleteImage = async (publicId: string, force: boolean = false) => {
@@ -177,7 +177,7 @@ const AdminImagesPage: React.FC = () => {
 
   useEffect(() => {
     fetchImages();
-  }, [showUnusedOnly, fetchImages]);
+  }, [fetchImages]);
 
   if (loading) {
     return (
