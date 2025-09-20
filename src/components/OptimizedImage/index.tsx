@@ -89,7 +89,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   const handleImageStart = useCallback(() => {
     tracker.startTracking(optimizedSrc);
-  }, [optimizedSrc]);
+  }, [optimizedSrc, tracker]);
 
   // 로딩 시작 트래킹
   useEffect(() => {
