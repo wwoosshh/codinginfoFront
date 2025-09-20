@@ -49,7 +49,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, disabled =
         throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
       }
 
-      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5159'}/api/images/upload`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://codinginfoback-production.up.railway.app'}/api/images/upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

@@ -59,6 +59,8 @@ const NavLink = styled(Link)<{ $active: boolean }>`
         if (children.includes('대시보드')) return '📊';
         if (children.includes('사용자')) return '👥';
         if (children.includes('아티클')) return '📝';
+        if (children.includes('카테고리')) return '📂';
+        if (children.includes('이미지')) return '🖼️';
         if (children.includes('시스템')) return '⚙️';
       }
       return '•';
@@ -147,6 +149,11 @@ const AdminLayout: React.FC = () => {
           <NavItem>
             <NavLink to="/admin/categories" $active={isActive('/admin/categories')}>
               카테고리 관리
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/admin/images" $active={isActive('/admin/images')}>
+              이미지 관리
             </NavLink>
           </NavItem>
           <NavItem>

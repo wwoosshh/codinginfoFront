@@ -14,6 +14,7 @@ import AdminArticlesPage from './pages/AdminArticlesPage';
 import AdminCategoriesPage from './pages/AdminCategoriesPage';
 import AdminArticleEditPage from './pages/AdminArticleEditPage';
 import AdminSystemPage from './pages/AdminSystemPage';
+import AdminImagesPage from './pages/AdminImagesPage';
 import AdminLayout from './components/AdminLayout';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
             <Route path="articles/new" element={<AdminArticleEditPage />} />
             <Route path="articles/:id" element={<AdminArticleEditPage />} />
             <Route path="categories" element={<AdminCategoriesPage />} />
+            <Route path="images" element={<AdminImagesPage />} />
             <Route path="system" element={<AdminSystemPage />} />
           </Route>
           <Route path="/*" element={
