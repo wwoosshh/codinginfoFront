@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { authService, LoginData } from '../services/authApi';
 
@@ -80,7 +79,6 @@ const SuccessMessage = styled.div`
 `;
 
 const LoginPage: React.FC = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginData>({
     email: '',
     password: '',
