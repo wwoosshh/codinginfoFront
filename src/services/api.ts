@@ -68,6 +68,9 @@ api.interceptors.response.use(
       switch (status) {
         case 404:
           throw new Error('요청한 리소스를 찾을 수 없습니다.');
+        case 429:
+          const retryAfter = error.response.headers['retry-after'] || 900; // 15분 기본값
+          throw new Error(`요청이 너무 많습니다. ${Math.ceil(retryAfter / 60)}분 후에 다시 시도해주세요.`);
         case 500:
           throw new Error('서버 오류가 발생했습니다.');
         default:
