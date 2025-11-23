@@ -252,6 +252,22 @@ const Header: React.FC = () => {
     fetchCategories();
   }, []);
 
+  // 실시간 검색을 위한 디바운싱
+  useEffect(() => {
+    // 검색어가 비어있으면 검색하지 않음
+    if (!searchQuery.trim()) {
+      return;
+    }
+
+    // 500ms 후에 검색 실행
+    const timer = setTimeout(() => {
+      navigate(`/?search=${encodeURIComponent(searchQuery.trim())}`, { replace: true });
+    }, 500);
+
+    // 클린업: 새로운 입력이 있으면 이전 타이머 취소
+    return () => clearTimeout(timer);
+  }, [searchQuery, navigate]);
+
   const fetchCategories = async () => {
     try {
       const data = await categoryApi.getAllCategories();
