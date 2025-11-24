@@ -55,12 +55,56 @@ const Message = styled.div<{ isUser: boolean }>`
   background: ${({ isUser, theme }) => (isUser ? theme.colors.primary + '20' : theme.colors.surface)};
   border-radius: ${({ theme }) => theme.borderRadius.md};
   border: 1px solid ${({ theme }) => theme.colors.border};
+  white-space: pre-wrap;
+  word-break: break-word;
 `;
 
 const MessageRole = styled.div`
   font-weight: 600;
   margin-bottom: ${({ theme }) => theme.spacing.sm};
   color: ${({ theme }) => theme.colors.primary};
+`;
+
+const MessageContent = styled.div`
+  line-height: 1.6;
+
+  p {
+    margin: 0 0 ${({ theme }) => theme.spacing.sm} 0;
+  }
+
+  strong {
+    font-weight: 700;
+    color: ${({ theme }) => theme.colors.text};
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  code {
+    background: ${({ theme }) => theme.colors.background};
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+  }
+
+  pre {
+    background: ${({ theme }) => theme.colors.background};
+    padding: ${({ theme }) => theme.spacing.md};
+    border-radius: ${({ theme }) => theme.borderRadius.md};
+    overflow-x: auto;
+    margin: ${({ theme }) => theme.spacing.sm} 0;
+  }
+
+  ul, ol {
+    margin: ${({ theme }) => theme.spacing.sm} 0;
+    padding-left: ${({ theme }) => theme.spacing.xl};
+  }
+
+  li {
+    margin: ${({ theme }) => theme.spacing.xs} 0;
+  }
 `;
 
 const InputGroup = styled.div`
@@ -229,7 +273,9 @@ const AdminAIArticlePage: React.FC = () => {
               .map((msg, idx) => (
                 <Message key={idx} isUser={msg.role === 'user'}>
                   <MessageRole>{msg.role === 'user' ? '나' : 'AI'}</MessageRole>
-                  <div>{msg.content}</div>
+                  <MessageContent>
+                    <MarkdownRenderer content={msg.content} />
+                  </MessageContent>
                 </Message>
               ))}
           </ChatMessages>
