@@ -7,11 +7,11 @@ import {
   DraftArticle,
 } from '../types';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://codinginfoback-production.up.railway.app/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://codinginfoback-production.up.railway.app';
 
 // axios 인스턴스 생성
 const aiAxios = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_BASE_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
   },
