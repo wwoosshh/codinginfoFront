@@ -15,6 +15,8 @@ import AdminCategoriesPage from './pages/AdminCategoriesPage';
 import AdminArticleEditPage from './pages/AdminArticleEditPage';
 import AdminSystemPage from './pages/AdminSystemPage';
 import AdminImagesPage from './pages/AdminImagesPage';
+import AdminAISettingsPage from './pages/AdminAISettingsPage';
+import AdminAIArticlePage from './pages/AdminAIArticlePage';
 import AdminLayout from './components/AdminLayout';
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
             <Route path="categories" element={<AdminCategoriesPage />} />
             <Route path="images" element={<AdminImagesPage />} />
             <Route path="system" element={<AdminSystemPage />} />
+            <Route path="ai-settings" element={<AdminAISettingsPage />} />
+            <Route path="ai-article" element={<AdminAIArticlePage />} />
           </Route>
           <Route path="/*" element={
             <Layout>

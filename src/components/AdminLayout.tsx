@@ -161,6 +161,16 @@ const AdminLayout: React.FC = () => {
               시스템 모니터링
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink to="/admin/ai-article" $active={isActive('/admin/ai-article')}>
+              🤖 AI 기사 작성
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/admin/ai-settings" $active={isActive('/admin/ai-settings')}>
+              ⚙️ AI 설정
+            </NavLink>
+          </NavItem>
         </NavList>
       </Sidebar>
 

@@ -48,3 +48,63 @@ export interface Category {
   createdAt: string;
   updatedAt: string;
 }
+
+// AI 관련 타입
+export enum AIProviderType {
+  GEMINI = 'gemini',
+  OPENAI = 'openai',
+  CLAUDE = 'claude',
+}
+
+export interface ProviderConfig {
+  hasApiKey: boolean;
+  apiKeyMasked: string | null;
+  enabled: boolean;
+  lastTested?: string;
+  lastTestSuccess?: boolean;
+}
+
+export interface AIConfiguration {
+  defaultProvider: AIProviderType;
+  providers: {
+    gemini?: ProviderConfig;
+    openai?: ProviderConfig;
+    claude?: ProviderConfig;
+  };
+}
+
+export interface ConversationMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: string;
+}
+
+export interface DraftArticle {
+  title: string;
+  description: string;
+  content: string;
+  category: string;
+  tags: string[];
+  imageUrl?: string;
+}
+
+export enum ConversationStatus {
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  PUBLISHED = 'published',
+  ARCHIVED = 'archived',
+}
+
+export interface AIConversation {
+  _id: string;
+  title: string;
+  status: ConversationStatus;
+  aiProvider: AIProviderType;
+  messages: ConversationMessage[];
+  draftArticle?: DraftArticle;
+  publishedArticleId?: string;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
