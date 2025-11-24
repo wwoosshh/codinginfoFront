@@ -20,7 +20,7 @@ const aiAxios = axios.create({
 // 요청 인터셉터: 토큰 자동 추가
 aiAxios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
