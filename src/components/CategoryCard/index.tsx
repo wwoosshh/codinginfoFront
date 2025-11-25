@@ -8,11 +8,13 @@ interface CardProps {
 }
 
 const Card = styled(Link)<CardProps>`
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xl};
   background: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  padding: ${({ theme }) => theme.spacing['2xl']};
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
   text-decoration: none;
   color: inherit;
   transition: ${({ theme }) => theme.transitions.normal};
@@ -20,9 +22,10 @@ const Card = styled(Link)<CardProps>`
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
+    transform: translateX(4px);
+    box-shadow: ${({ theme }) => theme.shadows.lg};
     border-color: ${({ theme }) => theme.colors.borderHover};
+    background: ${({ theme }) => theme.colors.surfaceHover};
   }
 
   &::before {
@@ -30,61 +33,70 @@ const Card = styled(Link)<CardProps>`
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    height: 4px;
+    bottom: 0;
+    width: 4px;
     background: ${({ $color }) => $color};
     transition: ${({ theme }) => theme.transitions.normal};
   }
 
   &:hover::before {
-    height: 6px;
+    width: 6px;
   }
 `;
 
 const CategoryIcon = styled.div<{ color: string }>`
-  width: 60px;
-  height: 60px;
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: ${({ theme }) => theme.borderRadius.lg};
   background: linear-gradient(135deg, ${({ color }) => color}15 0%, ${({ color }) => color}25 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  font-size: 24px;
+  font-size: 20px;
   color: ${({ color }) => color};
   border: 2px solid ${({ color }) => color}30;
 `;
 
+const ContentWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 const CategoryTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
+  font-size: ${({ theme }) => theme.fontSizes.xl};
   font-weight: 600;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
   color: ${({ theme }) => theme.colors.text};
 `;
 
 const CategoryDescription = styled.p`
   color: ${({ theme }) => theme.colors.textSecondary};
-  line-height: 1.6;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  line-height: 1.5;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
-const ExploreText = styled.div`
+const ArrowIcon = styled.div`
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: ${({ theme }) => theme.borderRadius.md};
+  background: ${({ theme }) => theme.colors.primaryLight};
+  color: ${({ theme }) => theme.colors.primary};
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  color: ${({ theme }) => theme.colors.primary};
-  font-weight: 500;
-  
-  &::after {
-    content: '→';
-    font-size: ${({ theme }) => theme.fontSizes.lg};
-    transition: ${({ theme }) => theme.transitions.fast};
-  }
-  
+  justify-content: center;
+  font-size: ${({ theme }) => theme.fontSizes.xl};
+  transition: ${({ theme }) => theme.transitions.fast};
+
   ${Card}:hover & {
-    &::after {
-      transform: translateX(4px);
-    }
+    background: ${({ theme }) => theme.colors.primary};
+    color: white;
+    transform: translateX(2px);
   }
 `;
 
@@ -110,13 +122,15 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       <CategoryIcon color={category.color}>
         {getIconForCategory(category.key)}
       </CategoryIcon>
-      
-      <CategoryTitle>{category.displayName}</CategoryTitle>
-      <CategoryDescription>{category.description}</CategoryDescription>
-      
-      <ExploreText>
-        탐험하기
-      </ExploreText>
+
+      <ContentWrapper>
+        <CategoryTitle>{category.displayName}</CategoryTitle>
+        <CategoryDescription>{category.description}</CategoryDescription>
+      </ContentWrapper>
+
+      <ArrowIcon>
+        →
+      </ArrowIcon>
     </Card>
   );
 };
