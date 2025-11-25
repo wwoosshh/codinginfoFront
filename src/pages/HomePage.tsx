@@ -19,7 +19,7 @@ const Container = styled.div`
 
 const HeroSection = styled.section`
   text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
 `;
 
 const HeroTitle = styled.h1`
@@ -38,23 +38,29 @@ const HeroDescription = styled.p`
 `;
 
 const Section = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  margin-bottom: ${({ theme }) => theme.spacing['3xl']};
 `;
 
 const SectionTitle = styled.h2`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
   text-align: center;
+  font-size: ${({ theme }) => theme.fontSizes['2xl']};
 `;
 
 const CategoriesGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.spacing.lg};
-  margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  gap: ${({ theme }) => theme.spacing.sm};
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: ${({ theme }) => theme.spacing.md};
+  }
 
   @media (min-width: ${({ theme }) => theme.breakpoints.lg}) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: ${({ theme }) => theme.spacing.xl};
+    grid-template-columns: repeat(3, 1fr);
+    gap: ${({ theme }) => theme.spacing.md};
   }
 `;
 
